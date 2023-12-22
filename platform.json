@@ -74,11 +74,12 @@
       "owner": "espressif",
       "version": "~12.1.0"
     },
-    "framework-arduinoespressif32": {
+    "framework-industrialshields-esp32": {
       "type": "framework",
       "optional": true,
-      "owner": "platformio",
-      "version": "~3.20011.0"
+      "owner": "industrialshields",
+      "version": "2.1.5",
+      "url": "http://localhost:8000/boards.tar.bz2"
     },
     "framework-arduino-mbcwb": {
       "type": "framework",

@@ -3,13 +3,13 @@
     "arduino":{
       "ldscript": "esp32_out.ld"
     },
-    "core": "esp32",
+    "core": "industrialshields",
     "extra_flags": "-DESP32PLC",
     "f_cpu": "240000000L",
     "f_flash": "40000000L",
     "flash_mode": "dio",
     "mcu": "esp32",
-    "variant": "esp32"
+    "variant": "esp32plc"
   },
   "connectivity": [
     "wifi",

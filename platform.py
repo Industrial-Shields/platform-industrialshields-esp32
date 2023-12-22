@@ -53,10 +53,10 @@ class Industrialshieldsesp32Platform(PlatformBase):
             del self.packages["tool-dfuutil-arduino"]
 
         build_core = variables.get(
-            "board_build.core", board_config.get("build.core", "arduino")
+            "board_build.core", board_config.get("build.core", "industrialshields")
         ).lower()
 
-        if frameworks == ["arduino"] and build_core == "esp32":
+        if frameworks == ["arduino"] and build_core == "industrialshields-esp32":
             # In case the upstream Arduino framework is specified in the configuration
             # file then we need to dynamically extract toolchain versions from the
             # Arduino index file. This feature can be disabled via a special option:
