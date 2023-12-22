@@ -67,7 +67,7 @@ class Industrialshieldsesp32Platform(PlatformBase):
                 ).lower()
                 == "yes"
             ):
-                package_version = self.packages["framework-arduinoespressif32"][
+                package_version = self.packages["framework-industrialshields-esp32"][
                     "version"
                 ]
 
@@ -157,7 +157,7 @@ class Industrialshieldsesp32Platform(PlatformBase):
             }
 
             if build_core == "mbcwb":
-                self.packages["framework-arduinoespressif32"]["optional"] = True
+                self.packages["framework-industrialshields-esp32"]["optional"] = True
                 self.packages["framework-arduino-mbcwb"]["optional"] = False
                 self.packages["tool-mbctool"]["type"] = "uploader"
                 self.packages["tool-mbctool"]["optional"] = False
@@ -400,7 +400,7 @@ class Industrialshieldsesp32Platform(PlatformBase):
 
     def configure_upstream_arduino_packages(self, url_items):
         framework_index_file = os.path.join(
-            self.get_package_dir("framework-arduinoespressif32") or "",
+            self.get_package_dir("framework-industrialshields-esp32") or "",
             "package",
             "package_esp32_index.template.json",
         )
@@ -408,7 +408,7 @@ class Industrialshieldsesp32Platform(PlatformBase):
         # Detect whether the remote is already cloned
         if os.path.isfile(framework_index_file) and os.path.isdir(
             os.path.join(
-                self.get_package_dir("framework-arduinoespressif32") or "", ".git"
+                self.get_package_dir("framework-industrialshields-esp32") or "", ".git"
             )
         ):
             with open(framework_index_file) as fp:
