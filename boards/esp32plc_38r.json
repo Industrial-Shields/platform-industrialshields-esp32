@@ -4,7 +4,7 @@
             "ldscript": "esp32_out.ld"
         },
         "core": "industrialshields",
-        "extra_flags": " -DESP32PLC",
+        "extra_flags": " -DESP32PLC -DESP32PLC_38R",
         "f_cpu": "240000000L",
         "f_flash": "40000000L",
         "flash_mode": "dio",
@@ -19,7 +19,7 @@
     "frameworks": [
         "arduino"
     ],
-    "name": "ESP32 PLC",
+    "name": "ESP32 PLC 38R IO+",
     "upload": {
         "flash_size": "4MB",
         "maximum_ram_size": 327680,
@@ -27,6 +27,6 @@
         "require_upload_port": true,
         "speed": 460800
     },
-    "url": "",
+    "url": "www.industrialshields.com/shop/esp32-plc-38r-2906",
     "vendor": "Industrial Shields"
 }
