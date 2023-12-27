@@ -67,7 +67,7 @@ wifi_module = [("wifi_module", "WiFi Module", "esp32plc", "-DWIFI_MODULE", "")]
 esp32plcs = [("esp32plc", "ESP32 PLC", "esp32plc", "-DESP32PLC", ""),
              ("esp32plc_19r", "ESP32 PLC 19R IO+", "esp32plc", "-DESP32PLC -DESP32PLC_19R", "www.industrialshields.com/shop/esp32-plc-21-2801"),
              ("esp32plc_21", "ESP32 PLC 21 IO+", "esp32plc", "-DESP32PLC -DESP32PLC_21", "www.industrialshields.com/shop/esp32-plc-19r-2905"),
-             ("esp32plc_38ar", "ESP32 PLC 38AR IO+", "esp32plc", "-DESP32PLC -DEòSP32PLC_38AR", "www.industrialshields.com/shop/esp32-plc-38ar-2910"),
+             ("esp32plc_38ar", "ESP32 PLC 38AR IO+", "esp32plc", "-DESP32PLC -DESP32PLC_38AR", "www.industrialshields.com/shop/esp32-plc-38ar-2910"),
              ("esp32plc_38r", "ESP32 PLC 38R IO+", "esp32plc", "-DESP32PLC -DESP32PLC_38R", "www.industrialshields.com/shop/esp32-plc-38r-2906"),
              ("esp32plc_42", "ESP32 PLC 42 IO+", "esp32plc", "-DESP32PLC -DESP32PLC_42", "www.industrialshields.com/shop/esp32-plc-42-2907"),
              ("esp32plc_50rra", "ESP32 PLC 50RRA IO+", "esp32plc", "-DESP32PLC -DESP32PLC_50RRA", "www.industrialshields.com/shop/esp32-plc-50rra-2912"),

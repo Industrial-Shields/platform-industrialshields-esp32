@@ -4,7 +4,7 @@
             "ldscript": "esp32_out.ld"
         },
         "core": "industrialshields",
-        "extra_flags": " -DESP32PLC -DE\u00f2SP32PLC_38AR",
+        "extra_flags": " -DESP32PLC -DESP32PLC_38AR",
         "f_cpu": "240000000L",
         "f_flash": "40000000L",
         "flash_mode": "dio",
