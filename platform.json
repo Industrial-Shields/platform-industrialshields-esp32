@@ -2,7 +2,7 @@
     "name": "industrialshields-esp32",
     "title": "Industrial Shields ESP32",
     "description": "ESP32 is a series of low-cost, low-power system on a chip microcontrollers with integrated Wi-Fi and Bluetooth. ESP32 integrates an antenna switch, RF balun, power amplifier, low-noise receive amplifier, filters, and power management modules.",
-    "version": "2.1.5",
+    "version": "1.0.0",
     "homepage": "https://industrialshields.com/",
     "license": "LGPL-3.0-or-later",
     "keywords": [
