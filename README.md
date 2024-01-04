@@ -1,39 +1,24 @@
-# Espressif 32: development platform for [PlatformIO](https://platformio.org)
+# Industrial Shields ESP32 PLCs: development platform for [PlatformIO](https://platformio.org)
 
-[![Build Status](https://github.com/platformio/platform-espressif32/workflows/Examples/badge.svg)](https://github.com/platformio/platform-espressif32/actions)
+This repository contains the configurations and examples to use the PlatformIO ecosystem with our Industrial Shields PLCs based on ESP32 open-source hardware. You can check the documentation of our ESP32-based PLCs in our [web page](https://www.industrialshields.com/industrial-esp32-plc-products-family-ideal-for-iot-solutions).
 
-ESP32 is a series of low-cost, low-power system on a chip microcontrollers with integrated Wi-Fi and Bluetooth. ESP32 integrates an antenna switch, RF balun, power amplifier, low-noise receive amplifier, filters, and power management modules.
-
-* [Home](https://registry.platformio.org/platforms/platformio/espressif32) (home page in the PlatformIO Registry)
-* [Documentation](https://docs.platformio.org/page/platforms/espressif32.html) (advanced usage, packages, boards, frameworks, etc.)
 
 # Usage
 
 1. [Install PlatformIO](https://platformio.org)
 2. Create PlatformIO project and configure a platform option in [platformio.ini](https://docs.platformio.org/page/projectconf.html) file:
 
-## Stable version
+``` ini
+[env]
+platform_packages =
+   framework-industrialshields-esp32@https://apps.industrialshields.com/main/arduino/boards/industrialshields-boards-esp32-X.X.X.tar.bz2
 
-See `platform` [documentation](https://docs.platformio.org/en/latest/projectconf/sections/env/options/platform/platform.html#projectconf-env-platform) for details.
-
-```ini
-[env:stable]
-; recommended to pin to a version, see https://github.com/platformio/platform-espressif32/releases
-; platform = espressif32 @ ^6.0.1
-platform = espressif32
+[env:board]
+platform = https://github.com/Industrial-Shields/platform-industrialshields-esp32.git
 board = ...
+; Comment this line if you don't have an ESP32 PLC
+build_flags = !python extra_build_flags.py -v 3 ;--click1 GPRS ; --click2 GPRS
 ...
 ```
 
-## Development version
-
-```ini
-[env:development]
-platform = https://github.com/platformio/platform-espressif32.git
-board = ...
-...
-```
-
-# Configuration
-
-Please navigate to [documentation](https://docs.platformio.org/page/platforms/espressif32.html).
+You can check all the available versions in https://apps.industrialshields.com/main/arduino/boards/ (all versions below 2.1.6 do NOT support PlatformIO).
