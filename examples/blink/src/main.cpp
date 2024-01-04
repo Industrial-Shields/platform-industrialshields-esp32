@@ -17,7 +17,14 @@
 
 #include <Arduino.h>
 
+
+#if defined(PIN_R1)
+#define OUTPUT_PIN R1
+#elif defined(PIN_R0_1)
+#define OUTPUT_PIN R0_1
+#elif defined(PIN_Q0_1)
 #define OUTPUT_PIN Q0_1
+#endif
 
 void setup() {
     pinMode(OUTPUT_PIN, OUTPUT);
