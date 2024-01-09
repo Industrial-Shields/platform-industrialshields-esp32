@@ -11,13 +11,16 @@ This repository contains the configurations and examples to use the PlatformIO e
 ``` ini
 [env]
 platform_packages =
+   ; You need to put a version instead of "X.X.X". The last one when this README was updated is 2.2.0
    framework-industrialshields-esp32@https://apps.industrialshields.com/main/arduino/boards/industrialshields-boards-esp32-X.X.X.tar.bz2
 
 [env:board]
 platform = https://github.com/Industrial-Shields/platform-industrialshields-esp32.git
 board = ...
-; Comment this line if you don't have an ESP32 PLC
-build_flags = !python extra_build_flags.py -v 3 ;--click1 GPRS ; --click2 GPRS
+; You don't need these lines for 10 IOs, 14 IOs or the WiFi module
+custom_version = 3 ; or 1
+custom_click1 = None ; or GPRS
+custom_click2 = None ; or GPRS
 ...
 ```
 
