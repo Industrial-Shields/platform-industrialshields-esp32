@@ -47,7 +47,7 @@ BASE_PLATFORMIO_INI = \
 
 [env]
 platform_packages =
-   framework-industrialshields-esp32@https://apps.industrialshields.com/main/arduino/boards/industrialshields-boards-esp32-2.1.6.tar.bz2
+   framework-industrialshields-esp32@https://apps.industrialshields.com/main/arduino/boards/industrialshields-boards-esp32-2.2.0.tar.bz2
 
 """
 
@@ -67,7 +67,9 @@ ESP32_ENV = \
 platform = https://github.com/Industrial-Shields/platform-industrialshields-esp32
 framework = arduino
 board = {}
-build_flags = !python extra_build_flags.py -v {} ;--click1 GPRS ; --click2 GPRS
+custom_version = {}
+custom_click1 = None ; or GPRS
+custom_click2 = None ; or GPRS
 """
 
 

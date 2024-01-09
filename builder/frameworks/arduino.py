@@ -51,6 +51,40 @@ build_core = board.get("build.core", "").lower()
 
 SConscript("_embed_files.py", exports="env")
 
+
+
+# Industrial Shields custom logic
+
+def click_macros(click: str, number: int) -> str:
+    if click == "GPRS":
+        return f"-DEXPANSION_MODULE{number}_GPRS "
+    elif click == "None":
+        return f""
+    else:
+        raise(f"Unknown type of click: {click}, only valid"
+        "values are: GPRS")
+
+if (board.get("build.variant") == "esp32plc"):
+    custom_version = int(env.GetProjectOption("custom_version"))
+    custom_click1 = env.GetProjectOption("custom_click1")
+    custom_click2 = env.GetProjectOption("custom_click2")
+
+    build_flags = []
+
+    if custom_version == 3:
+        build_flags.append("-DESP32PLC_V3")
+    elif custom_version == 1:
+        build_flags.append("-DESP32PLC_V1")
+    else:
+        raise("You need to specify version '3' or '1' of the ESP32 PLC")
+
+    build_flags.append(click_macros(custom_click1, 1))
+    build_flags.append(click_macros(custom_click2, 2))
+
+    env.Append(CCFLAGS=build_flags)
+
+
+
 if build_core == "mbcwb":
     SConscript(
         join(DefaultEnvironment().PioPlatform().get_package_dir(
@@ -61,3 +95,4 @@ elif "espidf" not in env.subst("$PIOFRAMEWORK"):
         join(DefaultEnvironment().PioPlatform().get_package_dir(
             "framework-industrialshields-esp32"), "tools", "platformio-build.py"))
     env["INTEGRATION_EXTRA_DATA"].update({"application_offset": env.subst("$ESP32_APP_OFFSET")})
+
