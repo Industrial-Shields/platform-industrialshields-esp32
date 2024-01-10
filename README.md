@@ -16,6 +16,7 @@ platform_packages =
 
 [env:board]
 platform = https://github.com/Industrial-Shields/platform-industrialshields-esp32.git
+framework = arduino
 board = ...
 ; You don't need these lines for 10 IOs, 14 IOs or the WiFi module
 custom_version = 3 ; or 1
