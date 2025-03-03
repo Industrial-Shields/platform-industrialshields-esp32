@@ -81,6 +81,11 @@ if (board.get("build.variant") == "esp32plc"):
     build_flags.append(click_macros(custom_click1, 1))
     build_flags.append(click_macros(custom_click2, 2))
 
+    boardsDirectory = DefaultEnvironment().PioPlatform().get_package_dir("framework-industrialshields-esp32")
+    plcPeripheralsDirectory = join(boardsDirectory, "cores", "industrialshields", "plc-peripherals", "include")
+    build_flags.append(f"-I{plcPeripheralsDirectory}")
+
+
     env.Append(CCFLAGS=build_flags)
 
 

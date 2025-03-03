@@ -11,7 +11,7 @@ This repository contains the configurations and examples to use the PlatformIO e
 ``` ini
 [env]
 platform_packages =
-   ; You need to put a version instead of "X.X.X". The last one when this README was updated is 2.2.0
+   ; You need to specify a version instead of "X.X.X". The last one when this README was updated is 2.3.1-hf.
    framework-industrialshields-esp32@https://apps.industrialshields.com/main/arduino/boards/industrialshields-boards-esp32-X.X.X.tar.bz2
 
 [env:board]
