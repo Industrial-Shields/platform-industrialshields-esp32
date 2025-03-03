@@ -64,12 +64,16 @@ def click_macros(click: str, number: int) -> str:
         raise(f"Unknown type of click: {click}, only valid"
         "values are: GPRS")
 
+build_flags = []
+
+boardsDirectory = DefaultEnvironment().PioPlatform().get_package_dir("framework-industrialshields-esp32")
+plcPeripheralsDirectory = join(boardsDirectory, "cores", "industrialshields", "plc-peripherals", "include")
+build_flags.append(f"-I{plcPeripheralsDirectory}")
+
 if (board.get("build.variant") == "esp32plc"):
     custom_version = int(env.GetProjectOption("custom_version"))
     custom_click1 = env.GetProjectOption("custom_click1")
     custom_click2 = env.GetProjectOption("custom_click2")
-
-    build_flags = []
 
     if custom_version == 3:
         build_flags.append("-DESP32PLC_V3")
@@ -81,13 +85,7 @@ if (board.get("build.variant") == "esp32plc"):
     build_flags.append(click_macros(custom_click1, 1))
     build_flags.append(click_macros(custom_click2, 2))
 
-    boardsDirectory = DefaultEnvironment().PioPlatform().get_package_dir("framework-industrialshields-esp32")
-    plcPeripheralsDirectory = join(boardsDirectory, "cores", "industrialshields", "plc-peripherals", "include")
-    build_flags.append(f"-I{plcPeripheralsDirectory}")
-
-
-    env.Append(CCFLAGS=build_flags)
-
+env.Append(CCFLAGS=build_flags)
 
 
 if build_core == "mbcwb":
