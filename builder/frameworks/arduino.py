@@ -55,15 +55,46 @@ SConscript("_embed_files.py", exports="env")
 
 # Industrial Shields custom logic
 
-def click_macros(click: str, number: int) -> str:
+def click_macros_number(click: str, number: int) -> str:
     if click == "GPRS":
         return f"-DEXPANSION_MODULE{number}_GPRS "
+    elif click == "NB":
+        return f"-DEXPANSION_MODULE{number}_NB "
+    elif click == "LTE":
+        return f"-DEXPANSION_MODULE{number}_LTE "
+    elif click == "CAN":
+        return f"-DEXPANSION_MODULE{number}_CAN "
+    elif click == "LORA_EU":
+        return f"-DEXPANSION_MODULE{number}_LORA -DEXPANSION_MODULE{number}_LORA_EUROPA "
+    elif click == "LORA_AMERICA":
+        return f"-DEXPANSION_MODULE{number}_LORA -DEXPANSION_MODULE{number}_LORA_AMERICA "
+    elif click == "LORA_ASIA":
+        return f"-DEXPANSION_MODULE{number}_LORA -DEXPANSION_MODULE{number}_LORA_ASIA "
     elif click == "None":
         return f""
     else:
-        raise(f"Unknown type of click: {click}, only valid"
-        "values are: GPRS")
+        raise Exception(f"Unknown type of click: {click}, only valid "
+                        "values are: GPRS, NB, LTE, CAN, LORA_EU, LORA_AMERICA, LORA_ASIA")
 
+def click_macros(click: str) -> str:
+    if click == "NB":
+        return f"-DEXPANSION_MODULE -DEXPANSION_MODULE_NB "
+    elif click == "LTE":
+        return f"-DEXPANSION_MODULE -DEXPANSION_MODULE_LTE "
+    elif click == "DALI":
+        return f"-DEXPANSION_MODULE -DEXPANSION_MODULE_DALI "
+    elif click == "LORA_EU":
+        return f"-DEXPANSION_MODULE -DEXPANSION_MODULE_LORA_EUROPA "
+    elif click == "LORA_AMERICA":
+        return f"-DEXPANSION_MODULE -DEXPANSION_MODULE_LORA_AMERICA "
+    elif click == "LORA_ASIA":
+        return f"-DEXPANSION_MODULE -DEXPANSION_MODULE_LORA_ASIA "
+    elif click == "None":
+        return f""
+    else:
+        raise Exception(f"Unknown type of click: {click}, only valid "
+                        "values are: NB, LTE, DALI, LORA_EU, LORA_AMERICA, LORA_ASIA")
+    
 build_flags = []
 
 boardsDirectory = DefaultEnvironment().PioPlatform().get_package_dir("framework-industrialshields-esp32")
@@ -80,11 +111,15 @@ if (board.get("build.variant") == "esp32plc"):
     elif custom_version == 1:
         build_flags.append("-DESP32PLC_V1")
     else:
-        raise("You need to specify version '3' or '1' of the ESP32 PLC")
+        raise Exception("You need to specify version '3' or '1' of the ESP32 PLC")
 
-    build_flags.append(click_macros(custom_click1, 1))
-    build_flags.append(click_macros(custom_click2, 2))
+    build_flags.append(click_macros_number(custom_click1, 1))
+    build_flags.append(click_macros_number(custom_click2, 2))
 
+elif (board.get("build.variant") == "14iosplc"):
+    custom_click = env.GetProjectOption("custom_click")
+    build_flags.append(click_macros(custom_click))
+    
 env.Append(CCFLAGS=build_flags)
 
 
