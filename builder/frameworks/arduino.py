@@ -56,45 +56,53 @@ SConscript("_embed_files.py", exports="env")
 # Industrial Shields custom logic
 
 def click_macros_number(click: str, number: int) -> str:
-    if click == "GPRS":
-        return f"-DEXPANSION_MODULE{number}_GPRS "
-    elif click == "NB":
-        return f"-DEXPANSION_MODULE{number}_NB "
-    elif click == "LTE":
-        return f"-DEXPANSION_MODULE{number}_LTE "
-    elif click == "CAN":
-        return f"-DEXPANSION_MODULE{number}_CAN "
-    elif click == "LORA_EU":
-        return f"-DEXPANSION_MODULE{number}_LORA -DEXPANSION_MODULE{number}_LORA_EUROPA "
-    elif click == "LORA_AMERICA":
-        return f"-DEXPANSION_MODULE{number}_LORA -DEXPANSION_MODULE{number}_LORA_AMERICA "
-    elif click == "LORA_ASIA":
-        return f"-DEXPANSION_MODULE{number}_LORA -DEXPANSION_MODULE{number}_LORA_ASIA "
-    elif click == "None":
-        return f""
+    if click == "None":
+        return
     else:
-        raise Exception(f"Unknown type of click: {click}, only valid "
-                        "values are: GPRS, NB, LTE, CAN, LORA_EU, LORA_AMERICA, LORA_ASIA")
+        if click == "GPRS":
+            build_flags.append(f"-DEXPANSION_MODULE{number}_GPRS")
+        elif click == "NB":
+            build_flags.append(f"-DEXPANSION_MODULE{number}_NB")
+        elif click == "LTE":
+            build_flags.append(f"-DEXPANSION_MODULE{number}_LTE")
+        elif click == "CAN":
+            build_flags.append(f"-DEXPANSION_MODULE{number}_CAN")
+        elif click == "LORA_EU":
+            build_flags.append(f"-DEXPANSION_MODULE{number}_LORA")
+            build_flags.append(f"-DEXPANSION_MODULE{number}_LORA_EUROPA")
+        elif click == "LORA_AMERICA":
+            build_flags.append(f"-DEXPANSION_MODULE{number}_LORA")
+            build_flags.append(f"-DEXPANSION_MODULE{number}_LORA_AMERICA")
+        elif click == "LORA_ASIA":
+            build_flags.append(f"-DEXPANSION_MODULE{number}_LORA")
+            build_flags.append(f"-DEXPANSION_MODULE{number}_LORA_ASIA")
+        else:
+            raise Exception(f"Unknown type of click: {click}, only valid "
+                            "values are: GPRS, NB, LTE, CAN, LORA_EU, LORA_AMERICA, LORA_ASIA")
+        return
 
 def click_macros(click: str) -> str:
-    if click == "NB":
-        return f"-DEXPANSION_MODULE -DEXPANSION_MODULE_NB "
-    elif click == "LTE":
-        return f"-DEXPANSION_MODULE -DEXPANSION_MODULE_LTE "
-    elif click == "DALI":
-        return f"-DEXPANSION_MODULE -DEXPANSION_MODULE_DALI "
-    elif click == "LORA_EU":
-        return f"-DEXPANSION_MODULE -DEXPANSION_MODULE_LORA_EUROPA "
-    elif click == "LORA_AMERICA":
-        return f"-DEXPANSION_MODULE -DEXPANSION_MODULE_LORA_AMERICA "
-    elif click == "LORA_ASIA":
-        return f"-DEXPANSION_MODULE -DEXPANSION_MODULE_LORA_ASIA "
-    elif click == "None":
-        return f""
+    if click == "None":
+        return
     else:
-        raise Exception(f"Unknown type of click: {click}, only valid "
-                        "values are: NB, LTE, DALI, LORA_EU, LORA_AMERICA, LORA_ASIA")
-    
+        build_flags.append("-DEXPANSION_MODULE")
+        if click == "NB":
+            build_flags.append("-DEXPANSION_MODULE_NB")
+        elif click == "LTE":
+            build_flags.append("-DEXPANSION_MODULE_LTE")
+        elif click == "DALI":
+            build_flags.append("-DEXPANSION_MODULE_DALI")
+        elif click == "LORA_EU":
+            build_flags.append("-DEXPANSION_MODULE_LORA_EUROPA")
+        elif click == "LORA_AMERICA":
+            build_flags.append("-DEXPANSION_MODULE_LORA_AMERICA")
+        elif click == "LORA_ASIA":
+            build_flags.append("-DEXPANSION_MODULE_LORA_ASIA")
+        else:
+            raise Exception(f"Unknown type of click: {click}, only valid "
+                            "values are: NB, LTE, DALI, LORA_EU, LORA_AMERICA, LORA_ASIA")
+        return
+
 build_flags = []
 
 boardsDirectory = DefaultEnvironment().PioPlatform().get_package_dir("framework-industrialshields-esp32")
@@ -102,10 +110,7 @@ plcPeripheralsDirectory = join(boardsDirectory, "cores", "industrialshields", "p
 build_flags.append(f"-I{plcPeripheralsDirectory}")
 
 if (board.get("build.variant") == "esp32plc"):
-    custom_version = int(env.GetProjectOption("custom_version"))
-    custom_click1 = env.GetProjectOption("custom_click1")
-    custom_click2 = env.GetProjectOption("custom_click2")
-
+    custom_version = int(env.GetProjectOption("custom_version", default = "3"))
     if custom_version == 3:
         build_flags.append("-DESP32PLC_V3")
     elif custom_version == 1:
@@ -113,12 +118,11 @@ if (board.get("build.variant") == "esp32plc"):
     else:
         raise Exception("You need to specify version '3' or '1' of the ESP32 PLC")
 
-    build_flags.append(click_macros_number(custom_click1, 1))
-    build_flags.append(click_macros_number(custom_click2, 2))
+    click_macros_number(env.GetProjectOption("custom_click1", default = "None"), 1)
+    click_macros_number(env.GetProjectOption("custom_click2", default = "None"), 2)
 
 elif (board.get("build.variant") == "14iosplc"):
-    custom_click = env.GetProjectOption("custom_click")
-    build_flags.append(click_macros(custom_click))
+    click_macros(env.GetProjectOption("custom_click", default = "None"))
     
 env.Append(CCFLAGS=build_flags)
 
