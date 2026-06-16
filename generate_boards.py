@@ -41,8 +41,8 @@ esp32_basejson = """
     "core": "industrialshields",
     "extra_flags": "",
     "f_cpu": "240000000L",
-    "f_flash": "40000000L",
-    "flash_mode": "dio",
+    "f_flash": "80000000L",
+    "flash_mode": "qout",
     "mcu": "esp32",
     "variant": ""
   },
@@ -56,9 +56,9 @@ esp32_basejson = """
   ],
   "name": "",
   "upload": {
-    "flash_size": "4MB",
+    "flash_size": "16MB",
     "maximum_ram_size": 327680,
-    "maximum_size": 1310720,
+    "maximum_size": 16777216,
     "require_upload_port": true,
     "speed": 460800
   },
