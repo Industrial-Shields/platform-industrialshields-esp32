@@ -239,6 +239,11 @@ filesystem = board.get("build.filesystem", "spiffs")
 if mcu in ("esp32c3", "esp32c6"):
     toolchain_arch = "riscv32-esp"
 
+# Deprecate esp32plc.json variant
+if board.id == "esp32plc":
+    sys.stderr.write("Warning! Board 'esp32plc' is deprecated. Please use `esp32plc_cpu` instead.\n")
+    sys.stderr.flush()
+
 if "INTEGRATION_EXTRA_DATA" not in env:
     env["INTEGRATION_EXTRA_DATA"] = {}
 

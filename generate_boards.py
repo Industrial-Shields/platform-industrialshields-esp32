@@ -80,7 +80,8 @@ def E(file_name: str, name: str, variant: str, extra_flags: str, url: str) \
 
 wifi_module = [E("wifi_module", "WiFi Module", "esp32plc", "-DWIFI_MODULE", "NOURL")]
     
-esp32plcs = [E("esp32plc", "ESP32 PLC", "esp32plc", "-DESP32PLC", ""),
+esp32plcs = [E("esp32plc", "ESP32 PLC", "esp32plc", "-DESP32PLC -DESP32PLC_CPU", ""),
+             E("esp32plc_cpu", "ESP32 PLC", "esp32plc", "-DESP32PLC -DESP32PLC_CPU", ""),
              E("esp32plc_19r", "ESP32 PLC 19R IO+", "esp32plc", "-DESP32PLC -DESP32PLC_19R", "www.industrialshields.com/shop/esp32-plc-21-2801"),
              E("esp32plc_21", "ESP32 PLC 21 IO+", "esp32plc", "-DESP32PLC -DESP32PLC_21", "www.industrialshields.com/shop/esp32-plc-19r-2905"),
              E("esp32plc_38ar", "ESP32 PLC 38AR IO+", "esp32plc", "-DESP32PLC -DESP32PLC_38AR", "www.industrialshields.com/shop/esp32-plc-38ar-2910"),

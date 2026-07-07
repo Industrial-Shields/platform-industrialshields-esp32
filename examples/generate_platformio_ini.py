@@ -31,7 +31,6 @@ from itertools import chain
 SCRIPT_DIRECTORY = os.path.dirname(os.path.realpath(__file__))
 BOARDS_DIRECTORY = os.path.join(SCRIPT_DIRECTORY, "../boards/")
 
-
 # base content of the PlatformIO configuration file
 BASE_PLATFORMIO_INI = \
 """
@@ -99,11 +98,12 @@ def separate_if_discriminator(strings_list: list[str, ...], discriminator: str) 
 
 # Generate a list of board names by removing ".json" extension from files in the boards directory
 boards_names = [f.replace(".json", "") for f in os.listdir(BOARDS_DIRECTORY)
-                if path.isfile(path.join(BOARDS_DIRECTORY, f))]
-
+                if path.isfile(path.join(BOARDS_DIRECTORY, f)) and f != "esp32plc.json"]
 
 # Separate first the ESP32 PLCs
 esp32plcs_boards, leftover_boards_names = separate_if_discriminator(boards_names, 'esp32plc')
+# "Ensure esp32plc_cpu remains first in the list
+esp32plcs_boards.sort(key=lambda x: x != "esp32plc_cpu")
 
 # Separate the 14 IOs from the leftovers
 _14ios_boards, leftover_boards_names = separate_if_discriminator(leftover_boards_names, "14ios")
