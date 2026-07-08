@@ -1,36 +1,34 @@
-"""
-Copyright 2014-present PlatformIO <contact@platformio.org>
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-   http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-
-
-Copyright (c) 2023 Boot&Work Corp., S.L. All rights reserved
-
-This file is part of platform-industrialshields-esp32.
-
-platform-industrialshields-esp32 is free software: you can redistribute
-it and/or modify it under the terms of the GNU General Public License
-as published by the Free Software Foundation, either version 3 of the
-License, or (at your option) any later version.
-
-platform-industrialshields-esp32 is distributed in the hope that it will
-be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
-"""
+# Copyright 2014-present PlatformIO <contact@platformio.org>
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+#
+# Copyright (c) 2023 Boot&Work Corp., S.L. All rights reserved
+#
+# This file is part of platform-industrialshields-esp32.
+#
+# platform-industrialshields-esp32 is free software: you can redistribute
+# it and/or modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation, either version 3 of the
+# license, or (at your option) any later version.
+#
+# platform-industrialshields-esp32 is distributed in the hope that it will
+# be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+# of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
 import urllib
@@ -126,61 +124,58 @@ class Industrialshieldsesp32Platform(PlatformBase):
 
             # Common packages for IDF and mixed Arduino+IDF projects
             for p in self.packages:
-                if p in ("tool-cmake", "tool-ninja", "toolchain-esp32ulp"):
+                if p in (
+                    "tool-cmake",
+                    "tool-ninja",
+                    "toolchain-esp32ulp",
+                    "tool-esp-rom-elfs",
+                ):
                     self.packages[p]["optional"] = False
                 elif p in ("tool-mconf", "tool-idf") and IS_WINDOWS:
                     self.packages[p]["optional"] = False
 
             if "arduino" in frameworks:
                 # Downgrade the IDF version for mixed Arduino+IDF projects
-                self.packages["framework-espidf"]["version"] = "~3.40405.0"
+                self.packages["framework-espidf"]["version"] = "~3.40407.0"
+                # Delete the latest toolchain packages from config
+                self.packages.pop("toolchain-xtensa-esp-elf", None)
             else:
-                # Use the latest toolchains available for IDF v5.0
+                # Disable old toolchain packages and use the latest
+                # available for IDF v5.0
                 for target in (
                     "xtensa-esp32",
                     "xtensa-esp32s2",
                     "xtensa-esp32s3",
-                    "riscv32-esp"
                 ):
-                    self.packages["toolchain-%s" % target]["version"] = "12.2.0+20230208"
+                    self.packages.pop("toolchain-%s" % target, None)
+
+                if mcu in ("esp32c3", "esp32c6"):
+                    self.packages.pop("toolchain-xtensa-esp-elf", None)
+                else:
+                    self.packages["toolchain-xtensa-esp-elf"][
+                        "optional"
+                    ] = False
+
+                # Pull the latest RISC-V toolchain from PlatformIO organization
+                self.packages["toolchain-riscv32-esp"]["owner"] = "platformio"
+                self.packages["toolchain-riscv32-esp"][
+                    "version"
+                ] = "15.2.0+20251204"
 
         if "arduino" in frameworks:
             # Disable standalone GDB packages for Arduino and Arduino/IDF projects
             for gdb_package in ("tool-xtensa-esp-elf-gdb", "tool-riscv32-esp-elf-gdb"):
                 self.packages.pop(gdb_package, None)
 
-        for available_mcu in ("esp32", "esp32s2", "esp32s3"):
-            if available_mcu == mcu:
-                self.packages["toolchain-xtensa-%s" % mcu]["optional"] = False
-            else:
-                self.packages.pop("toolchain-xtensa-%s" % available_mcu, None)
+            for available_mcu in ("esp32", "esp32s2", "esp32s3"):
+                if available_mcu == mcu:
+                    self.packages["toolchain-xtensa-%s" % mcu]["optional"] = False
+                else:
+                    self.packages.pop("toolchain-xtensa-%s" % available_mcu, None)
 
         if mcu in ("esp32s2", "esp32s3", "esp32c3", "esp32c6"):
             # RISC-V based toolchain for ESP32C3, ESP32C6 ESP32S2, ESP32S3 ULP
             self.packages["toolchain-riscv32-esp"]["optional"] = False
-
-        if build_core == "mbcwb":
-            # Remove the main toolchains from PATH
-            for toolchain in (
-                "toolchain-xtensa-esp32",
-                "toolchain-xtensa-esp32s2",
-                "toolchain-xtensa-esp32s3",
-                "toolchain-riscv32-esp",
-            ):
-                self.packages.pop(toolchain, None)
-
-            # Add legacy toolchain with specific version
-            self.packages["toolchain-xtensa32"] = {
-                "type": "toolchain",
-                "owner": "platformio",
-                "version": "~2.50200.0"
-            }
-
-            if build_core == "mbcwb":
-                self.packages["framework-industrialshields-esp32"]["optional"] = True
-                self.packages["framework-arduino-mbcwb"]["optional"] = False
-                self.packages["tool-mbctool"]["type"] = "uploader"
-                self.packages["tool-mbctool"]["optional"] = False
 
         return super().configure_default_packages(variables, targets)
 
@@ -204,7 +199,7 @@ class Industrialshieldsesp32Platform(PlatformBase):
 
         # debug tools
         debug = board.manifest.get("debug", {})
-        non_debug_protocols = ["esptool", "espota", "mbctool"]
+        non_debug_protocols = ["esptool", "espota"]
         supported_debug_tools = [
             "cmsis-dap",
             "esp-prog",
@@ -218,6 +213,10 @@ class Industrialshieldsesp32Platform(PlatformBase):
             "olimex-jtag-tiny",
             "tumpa",
         ]
+
+        # A special case for the Kaluga board that has a separate interface config
+        if board.id == "esp32-s2-kaluga-1":
+            supported_debug_tools.append("ftdi")
 
         if board.get("build.mcu", "") in ("esp32c3", "esp32c6", "esp32s3"):
             supported_debug_tools.append("esp-builtin")

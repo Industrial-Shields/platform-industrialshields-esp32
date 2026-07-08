@@ -1,36 +1,34 @@
-"""
-Copyright 2014-present PlatformIO <contact@platformio.org>
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-   http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-
-
-Copyright (c) 2023 Boot&Work Corp., S.L. All rights reserved
-
-This file is part of platform-industrialshields-esp32.
-
-platform-industrialshields-esp32 is free software: you can redistribute
-it and/or modify it under the terms of the GNU General Public License
-as published by the Free Software Foundation, either version 3 of the
-License, or (at your option) any later version.
-
-platform-industrialshields-esp32 is distributed in the hope that it will
-be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
-"""
+# Copyright 2014-present PlatformIO <contact@platformio.org>
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+#
+# Copyright (c) 2023 Boot&Work Corp., S.L. All rights reserved
+#
+# This file is part of platform-industrialshields-esp32.
+#
+# platform-industrialshields-esp32 is free software: you can redistribute
+# it and/or modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# platform-industrialshields-esp32 is distributed in the hope that it will
+# be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+# of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import re
 import sys
@@ -79,10 +77,30 @@ def _get_board_memory_type(env):
     )
 
 
-def _get_board_f_flash(env):
-    frequency = env.subst("$BOARD_F_FLASH")
+def _normalize_frequency(frequency):
     frequency = str(frequency).replace("L", "")
     return str(int(int(frequency) / 1000000)) + "m"
+
+
+def _get_board_f_flash(env):
+    frequency = env.subst("$BOARD_F_FLASH")
+    return _normalize_frequency(frequency)
+
+
+def _get_board_f_image(env):
+    board_config = env.BoardConfig()
+    if "build.f_image" in board_config:
+        return _normalize_frequency(board_config.get("build.f_image"))
+
+    return _get_board_f_flash(env)
+
+
+def _get_board_f_boot(env):
+    board_config = env.BoardConfig()
+    if "build.f_boot" in board_config:
+        return _normalize_frequency(board_config.get("build.f_boot"))
+
+    return _get_board_f_flash(env)
 
 
 def _get_board_flash_mode(env):
@@ -204,7 +222,7 @@ def _to_unix_slashes(path):
 def fetch_fs_size(env):
     fs = None
     for p in _parse_partitions(env):
-        if p["type"] == "data" and p["subtype"] in ("spiffs", "fat"):
+        if p["type"] == "data" and p["subtype"] in ("spiffs", "fat", "littlefs"):
             fs = p
     if not fs:
         sys.stderr.write(
@@ -250,10 +268,12 @@ if "INTEGRATION_EXTRA_DATA" not in env:
 env.Replace(
     __get_board_boot_mode=_get_board_boot_mode,
     __get_board_f_flash=_get_board_f_flash,
+    __get_board_f_image=_get_board_f_image,
+    __get_board_f_boot=_get_board_f_boot,
     __get_board_flash_mode=_get_board_flash_mode,
     __get_board_memory_type=_get_board_memory_type,
 
-    AR="%s-elf-ar" % toolchain_arch,
+    AR="%s-elf-gcc-ar" % toolchain_arch,
     AS="%s-elf-as" % toolchain_arch,
     CC="%s-elf-gcc" % toolchain_arch,
     CXX="%s-elf-g++" % toolchain_arch,
@@ -269,7 +289,7 @@ env.Replace(
     ) if env.get("PIOFRAMEWORK") == ["espidf"] else "%s-elf-gdb" % toolchain_arch,
     OBJCOPY=join(
         platform.get_package_dir("tool-esptoolpy") or "", "esptool.py"),
-    RANLIB="%s-elf-ranlib" % toolchain_arch,
+    RANLIB="%s-elf-gcc-ranlib" % toolchain_arch,
     SIZETOOL="%s-elf-size" % toolchain_arch,
 
     ARFLAGS=["rc"],
@@ -321,7 +341,7 @@ env.Append(
                         '"$PYTHONEXE" "$OBJCOPY"',
                 "--chip", mcu, "elf2image",
                 "--flash_mode", "${__get_board_flash_mode(__env__)}",
-                "--flash_freq", "${__get_board_f_flash(__env__)}",
+                "--flash_freq", "${__get_board_f_image(__env__)}",
                 "--flash_size", board.get("upload.flash_size", "4MB"),
                 "-o", "$TARGET", "$SOURCES"
             ]), "Building $TARGET"),
@@ -365,6 +385,8 @@ if "nobuild" in COMMAND_LINE_TARGETS:
     if set(["uploadfs", "uploadfsota"]) & set(COMMAND_LINE_TARGETS):
         fetch_fs_size(env)
         target_firm = join("$BUILD_DIR", "${ESP32_FS_IMAGE_NAME}.bin")
+    if env.get("PIO_ESP32_SINGLE_BOOTLOADER_TARGET", False):
+        target_firm = join("$BUILD_DIR", "${ESP32_BOOTLOADER_IMAGE_NAME}.bin")
     else:
         target_firm = join("$BUILD_DIR", "${PROGNAME}.bin")
 else:
@@ -375,9 +397,25 @@ else:
         )
         env.NoCache(target_firm)
         AlwaysBuild(target_firm)
+    elif env.get("PIO_ESP32_SINGLE_BOOTLOADER_TARGET", False):
+        target_firm = join("$BUILD_DIR", "${ESP32_BOOTLOADER_IMAGE_NAME}.bin")
     else:
         target_firm = env.ElfToBin(
-            join("$BUILD_DIR", "${PROGNAME}"), target_elf)
+            join("$BUILD_DIR", "${PROGNAME}"), target_elf
+        )
+        if env.get("PIO_ESP32_SIGNATURE_REQUIRED", False) or env.get(
+            "PIO_ESP32_SECURE_BOOT_BUILD_SIGNED_BINARIES", False
+        ):
+            target_firm = env.SignBin(
+                join("$BUILD_DIR", "${PROGNAME}-signed"), target_firm
+            )
+        if env.get("PIO_ESP32_ENCRYPTION_REQUIRED", False):
+            target_firm = env.Clone(
+                FLASH_IMAGE_OFFSET="$ESP32_APP_OFFSET"
+            ).EncryptBin(
+                join("$BUILD_DIR", "${PROGNAME}-encrypted"), target_firm
+            )
+
         env.Depends(target_firm, "checkprogsize")
 
 env.AddPlatformTarget("buildfs", target_firm, target_firm, "Build Filesystem Image")
@@ -457,7 +495,7 @@ elif upload_protocol == "esptool":
             "--after", board.get("upload.after_reset", "hard_reset"),
             "write_flash", "-z",
             "--flash_mode", "${__get_board_flash_mode(__env__)}",
-            "--flash_freq", "${__get_board_f_flash(__env__)}",
+            "--flash_freq", "${__get_board_f_image(__env__)}",
             "--flash_size", board.get("upload.flash_size", "detect")
         ],
         UPLOADCMD='"$PYTHONEXE" "$UPLOADER" $UPLOADERFLAGS $ESP32_APP_OFFSET $SOURCE'
@@ -475,7 +513,7 @@ elif upload_protocol == "esptool":
                 "--after", board.get("upload.after_reset", "hard_reset"),
                 "write_flash", "-z",
                 "--flash_mode", "${__get_board_flash_mode(__env__)}",
-                "--flash_freq", "${__get_board_f_flash(__env__)}",
+                "--flash_freq", "${__get_board_f_image(__env__)}",
                 "--flash_size", board.get("upload.flash_size", "detect"),
                 "$FS_START"
             ],
@@ -487,32 +525,6 @@ elif upload_protocol == "esptool":
         env.VerboseAction("$UPLOADCMD", "Uploading $SOURCE")
     ]
 
-
-elif upload_protocol == "mbctool":
-    env.Replace(
-        UPLOADER=join(
-            platform.get_package_dir("tool-mbctool") or "", "bin", "mbctool"),
-        UPLOADERFLAGS=[
-            "--device", "esp",
-            "--speed", "$UPLOAD_SPEED",
-            "--port", '"$UPLOAD_PORT"',
-            "--upload",
-            "0x1000", join(
-                platform.get_package_dir("framework-arduino-mbcwb"),
-                "tools", "sdk", "bin", "bootloader_qio_80m.bin"),
-            "0x8000", join("$BUILD_DIR", "partitions.bin"),
-            "0xe000", join(
-                platform.get_package_dir("framework-arduino-mbcwb"),
-                "tools", "partitions", "boot_app0.bin"),
-            "0x10000", join("$BUILD_DIR", "${PROGNAME}.bin"),
-        ],
-        UPLOADCMD='"$UPLOADER" $UPLOADERFLAGS'
-    )
-    upload_actions = [
-        env.VerboseAction(env.AutodetectUploadPort,
-                          "Looking for upload port..."),
-        env.VerboseAction("$UPLOADCMD", "Uploading $SOURCE")
-    ]
 
 elif upload_protocol == "dfu":
 
@@ -590,6 +602,54 @@ env.AddPlatformTarget("upload", target_firm, upload_actions, "Upload")
 env.AddPlatformTarget("uploadfs", target_firm, upload_actions, "Upload Filesystem Image")
 env.AddPlatformTarget(
     "uploadfsota", target_firm, upload_actions, "Upload Filesystem Image OTA")
+
+if "espidf" in env.get("PIOFRAMEWORK"):
+
+    env.AddPlatformTarget(
+        "encrypt",
+        target_firm,
+        None,
+        "Encrypt Application Images"
+    )
+
+    env.AddPlatformTarget(
+        "sign",
+        target_firm,
+        None,
+        "Sign Application Images"
+    )
+
+    env.AddPlatformTarget(
+        "app",
+        target_firm,
+        None,
+        "Build Application"
+    )
+
+    env.AddPlatformTarget(
+        "bootloader",
+        target_firm,
+        None,
+        "Build Bootloader"
+    )
+
+    # Helper targets for better UX in IDE
+    configured_targets = []
+    for target_name in ("", "-app", "-bootloader"):
+        for action_name in ("", "-signed", "-encrypted", "-signed-encrypted"):
+            if not target_name and not action_name:
+                continue
+            env.AddPlatformTarget(
+                "__upload%s%s" % (action_name, target_name),
+                target_firm,
+                upload_actions,
+                "Upload%s %s"
+                % (
+                    action_name.replace("-", " ").title(),
+                    target_name.replace("-", "").title(),
+                ),
+            )
+
 
 #
 # Target: Erase Flash
