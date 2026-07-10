@@ -93,10 +93,14 @@ PLC14IOS_CLICK_FLAGS = {
     "NB": "NB",
     "LTE": "LTE",
     "DALI": "DALI",
+    "CAN": "CAN",
     "LORA_EUROPA": "LORA_EUROPA",
     "LORA_EU": "LORA_EUROPA",
     "LORA_AMERICA": "LORA_AMERICA",
     "LORA_ASIA": "LORA_ASIA",
+    "GPS_1": "GPS_1",
+    "GPS_4": "GPS_4",
+    "RTC": "RTC",
 }
 
 def click_macros_14iosplc(click: str) -> None:
