@@ -72,18 +72,43 @@ custom_click2 = None ; or GPRS
 """
 
 
+EXAMPLE_DIRS = [
+    "blink",
+    "hello-world",
+    "rs232-receive",
+    "rs232-send",
+    "rs485-receive",
+    "rs485-send",
+]
+
+EXAMPLE_FILTERS = {
+    "hello-world": None,
+    "blink": {"esp32plc_variant", "14ios", "10ios"},
+    "rs232-send": {"esp32plc_cpu", "esp32plc_variant"},
+    "rs232-receive": {"esp32plc_cpu", "esp32plc_variant"},
+    "rs485-receive": {"esp32plc_cpu", "esp32plc_variant", "14ios", "10ios"},
+    "rs485-send": {"esp32plc_cpu", "esp32plc_variant", "14ios", "10ios"},
+}
+
+
+def board_category(board_name: str) -> str:
+    if board_name == "esp32plc":
+        return "esp32plc_base"
+    elif board_name == "esp32plc_cpu":
+        return "esp32plc_cpu"
+    elif board_name.startswith("esp32plc_"):
+        return "esp32plc_variant"
+    elif board_name.startswith("14ios"):
+        return "14ios"
+    elif board_name.startswith("10ios"):
+        return "10ios"
+    elif board_name == "wifi_module":
+        return "wifi"
+    return "other"
+
+
 def separate_if_discriminator(strings_list: list[str, ...], discriminator: str) \
         -> (list[str, ...], list[str, ...]):
-    """
-    Separates a list of strings based on the presence of a discriminator.
-
-    Args:
-        strings_list (list): List of strings to be separated.
-        discriminator (str): Discriminator string for separation.
-
-    Returns:
-        tuple: Two lists, one containing strings with the discriminator, and the other without.
-    """
     complying_boards_names, noncomplying_boards_names = [], []
 
     for board in strings_list:
@@ -95,40 +120,45 @@ def separate_if_discriminator(strings_list: list[str, ...], discriminator: str) 
     return complying_boards_names, noncomplying_boards_names
 
 
-
 # Generate a list of board names by removing ".json" extension from files in the boards directory
 boards_names = [f.replace(".json", "") for f in os.listdir(BOARDS_DIRECTORY)
                 if path.isfile(path.join(BOARDS_DIRECTORY, f)) and f != "esp32plc.json"]
 
-# Separate first the ESP32 PLCs
-esp32plcs_boards, leftover_boards_names = separate_if_discriminator(boards_names, 'esp32plc')
-# "Ensure esp32plc_cpu remains first in the list
-esp32plcs_boards.sort(key=lambda x: x != "esp32plc_cpu")
 
-# Separate the 14 IOs from the leftovers
-_14ios_boards, leftover_boards_names = separate_if_discriminator(leftover_boards_names, "14ios")
+for example_dir in EXAMPLE_DIRS:
+    filter_set = EXAMPLE_FILTERS.get(example_dir)
+    if filter_set is None:
+        filtered_boards = boards_names
+    else:
+        filtered_boards = [b for b in boards_names if board_category(b) in filter_set]
 
-# Separate the 10 IOs from the leftovers
-_10ios_boards, leftover_boards_names = separate_if_discriminator(leftover_boards_names, "10ios")
+    # Separate first the ESP32 PLCs
+    esp32plcs_boards, leftover_boards_names = separate_if_discriminator(filtered_boards, 'esp32plc')
+    # Ensure esp32plc_cpu remains first in the list
+    esp32plcs_boards.sort(key=lambda x: x != "esp32plc_cpu")
 
+    # Separate the 14 IOs from the leftovers
+    _14ios_boards, leftover_boards_names = separate_if_discriminator(leftover_boards_names, "14ios")
 
-# Write the PlatformIO configuration to a new file
-with open("platformio.ini", 'w', encoding="utf-8") as new_file:
+    # Separate the 10 IOs from the leftovers
+    _10ios_boards, leftover_boards_names = separate_if_discriminator(leftover_boards_names, "10ios")
 
-    new_file.write(BASE_PLATFORMIO_INI)
+    filepath = path.join(SCRIPT_DIRECTORY, example_dir, "platformio.ini")
+    with open(filepath, 'w', encoding="utf-8") as new_file:
+        new_file.write(BASE_PLATFORMIO_INI)
 
-    # ESP32 PLC boards v3
-    for board_name in esp32plcs_boards:
-        new_file.write(ESP32_ENV.format(board_name, 3, board_name, 3))
+        # ESP32 PLC boards v3
+        for board_name in esp32plcs_boards:
+            new_file.write(ESP32_ENV.format(board_name, 3, board_name, 3))
 
-    # 14 IOs
-    for board_name in _14ios_boards:
-        new_file.write(BASE_ENV.format(board_name, board_name))
+        # 14 IOs
+        for board_name in _14ios_boards:
+            new_file.write(BASE_ENV.format(board_name, board_name))
 
-    # ESP32 PLC boards v1
-    for board_name in esp32plcs_boards:
-        new_file.write(ESP32_ENV.format(board_name, 1, board_name, 1))
+        # ESP32 PLC boards v1
+        for board_name in esp32plcs_boards:
+            new_file.write(ESP32_ENV.format(board_name, 1, board_name, 1))
 
-    # Other boards
-    for board_name in chain(_10ios_boards, leftover_boards_names):
-        new_file.write(BASE_ENV.format(board_name, board_name))
+        # Other boards
+        for board_name in chain(_10ios_boards, leftover_boards_names):
+            new_file.write(BASE_ENV.format(board_name, board_name))
