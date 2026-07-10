@@ -9,7 +9,7 @@
         "f_flash": "80000000L",
         "flash_mode": "qout",
         "mcu": "esp32",
-        "variant": "esp32plc"
+        "variant": "wifimodule"
     },
     "connectivity": [
         "wifi",

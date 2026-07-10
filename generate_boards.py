@@ -78,7 +78,7 @@ def E(file_name: str, name: str, variant: str, extra_flags: str, url: str) \
 
 
 
-wifi_module = [E("wifi_module", "WiFi Module", "esp32plc", "-DWIFI_MODULE", "NOURL")]
+wifi_module = [E("wifi_module", "WiFi Module", "wifimodule", "-DWIFI_MODULE", "NOURL")]
     
 esp32plcs = [E("esp32plc", "ESP32 PLC", "esp32plc", "-DESP32PLC -DESP32PLC_CPU", ""),
              E("esp32plc_cpu", "ESP32 PLC", "esp32plc", "-DESP32PLC -DESP32PLC_CPU", ""),
