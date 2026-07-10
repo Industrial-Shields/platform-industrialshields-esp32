@@ -68,6 +68,8 @@ ESP32PLC_CLICK_FLAGS = {
     "LORA_EU":       ["LORA", "LORA_EUROPA"],
     "LORA_AMERICA":  ["LORA", "LORA_AMERICA"],
     "LORA_ASIA":     ["LORA", "LORA_ASIA"],
+    "GPS_1":         ["GPS_1"],
+    "GPS_4":         ["GPS_4"],
 }
 
 def click_macros_esp32plc(click: str, number: int) -> None:
