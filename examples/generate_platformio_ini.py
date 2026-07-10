@@ -71,6 +71,17 @@ custom_click1 = None ; or GPRS
 custom_click2 = None ; or GPRS
 """
 
+# Base content of a generic environment for 14 IOS PLCs v1 and v4 boards
+PLC14IOS_ENV = \
+"""
+[env:{}_v{}]
+platform = https://github.com/Industrial-Shields/platform-industrialshields-esp32
+framework = arduino
+board = {}
+custom_version = {}
+custom_click = None
+"""
+
 
 EXAMPLE_DIRS = [
     "blink",
@@ -151,9 +162,13 @@ for example_dir in EXAMPLE_DIRS:
         for board_name in esp32plcs_boards:
             new_file.write(ESP32_ENV.format(board_name, 3, board_name, 3))
 
-        # 14 IOs
+        # 14 IOs boards v4
         for board_name in _14ios_boards:
-            new_file.write(BASE_ENV.format(board_name, board_name))
+            new_file.write(PLC14IOS_ENV.format(board_name, 4, board_name, 4))
+
+        # 14 IOs boards v1 (legacy)
+        for board_name in _14ios_boards:
+            new_file.write(PLC14IOS_ENV.format(board_name, 1, board_name, 1))
 
         # ESP32 PLC boards v1
         for board_name in esp32plcs_boards:

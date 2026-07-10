@@ -125,6 +125,14 @@ if (board.get("build.variant") == "esp32plc"):
     click_macros_esp32plc(env.GetProjectOption("custom_click2", default = "None"), 2)
 
 elif (board.get("build.variant") == "14iosplc"):
+    custom_version = int(env.GetProjectOption("custom_version", default = "4"))
+    if custom_version == 4:
+        build_flags.append("-DPLC14IOS_V4")
+    elif custom_version == 1:
+        build_flags.append("-DPLC14IOS_V1")
+    else:
+        raise Exception("You need to specify version '4' or '1' of the 14 IOS PLC")
+
     click_macros_14iosplc(env.GetProjectOption("custom_click", default = "None"))
 
 env.Append(CCFLAGS=build_flags)
