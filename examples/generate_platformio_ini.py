@@ -66,9 +66,9 @@ ESP32_ENV = \
 platform = https://github.com/Industrial-Shields/platform-industrialshields-esp32
 framework = arduino
 board = {}
-custom_version = {}
-custom_click1 = None ; or GPRS
-custom_click2 = None ; or GPRS
+custom_version = {} ; 3, or 1 (legacy)
+custom_click1 = None ; or GPRS, NB, LTE, CAN, LORA_EUROPA/LORA_EU, LORA_AMERICA, LORA_ASIA, GPS_1, GPS_4
+custom_click2 = None ; or GPRS, NB, LTE, CAN, LORA_EUROPA/LORA_EU, LORA_AMERICA, LORA_ASIA, GPS_1, GPS_4
 """
 
 # Base content of a generic environment for 14 IOS PLCs v1 and v4 boards
@@ -78,8 +78,8 @@ PLC14IOS_ENV = \
 platform = https://github.com/Industrial-Shields/platform-industrialshields-esp32
 framework = arduino
 board = {}
-custom_version = {}
-custom_click = None
+custom_version = {} ; 4, or 1 (legacy)
+custom_click = None ; or NB, LTE, DALI, CAN, LORA_EUROPA/LORA_EU, LORA_AMERICA, LORA_ASIA, GPS_1, GPS_4, RTC
 """
 
 
