@@ -81,8 +81,8 @@ def E(file_name: str, name: str, variant: str, extra_flags: str, url: str) \
 
 wifi_module = [E("wifi_module", "WiFi Module", "wifimodule", "-DWIFI_MODULE", "NOURL")]
     
-esp32plcs = [E("esp32plc", "ESP32 PLC", "esp32plc", "-DESP32PLC -DESP32PLC_CPU", ""),
-             E("esp32plc_cpu", "ESP32 PLC", "esp32plc", "-DESP32PLC -DESP32PLC_CPU", ""),
+esp32plcs = [E("esp32plc", "ESP32 PLC", "esp32plc", "-DESP32PLC -DESP32PLC_CPU", "NOURL"),
+             E("esp32plc_cpu", "ESP32 PLC", "esp32plc", "-DESP32PLC -DESP32PLC_CPU", "NOURL"),
              E("esp32plc_19r", "ESP32 PLC 19R IO+", "esp32plc", "-DESP32PLC -DESP32PLC_19R", "www.industrialshields.com/shop/esp32-plc-21-2801"),
              E("esp32plc_21", "ESP32 PLC 21 IO+", "esp32plc", "-DESP32PLC -DESP32PLC_21", "www.industrialshields.com/shop/esp32-plc-19r-2905"),
              E("esp32plc_38ar", "ESP32 PLC 38AR IO+", "esp32plc", "-DESP32PLC -DESP32PLC_38AR", "www.industrialshields.com/shop/esp32-plc-38ar-2910"),
@@ -95,11 +95,11 @@ esp32plcs = [E("esp32plc", "ESP32 PLC", "esp32plc", "-DESP32PLC -DESP32PLC_CPU",
              E("esp32plc_57r", "ESP32 PLC 57R IO+", "esp32plc", "-DESP32PLC -DESP32PLC_57R", "www.industrialshields.com/shop/esp32-plc-57r-2908"),
              E("esp32plc_58", "ESP32 PLC 58 IO+", "esp32plc", "-DESP32PLC -DESP32PLC_58", "www.industrialshields.com/shop/esp32-plc-58-2909")]
 
-_10iosplcs = [E("10iosplc_digital", "10 IOS PLC Digital", "10iosplc", "-DPLC10IOS -DPLC10IOS_DIGITAL", "www.industrialshields.com/shop/013002000100-i2c-10-i-o-s-digital-module-cpu-esp32-m-2977"),
-              E("10iosplc_relay", "10 IOS PLC Relay", "10iosplc", "-DPLC10IOS -DPLC10IOS_RELAY", "www.industrialshields.com/shop/013002000200-i2c-10-i-o-s-relay-module-cpu-esp32-m-2978")]
+_10iosplcs = [E("10iosplc_digital", "10 IOS PLC Digital", "10iosplc", "-DPLC10IOS -DPLC10IOS_DIGITAL", "NOURL"),
+              E("10iosplc_relay", "10 IOS PLC Relay", "10iosplc", "-DPLC10IOS -DPLC10IOS_RELAY", "NOURL")]
 
-_14iosplcs = [E("14iosplc_ma", "ESP32 PLC 14 (4-20 mA)", "14iosplc", "-DPLC14IOS -DPLC14IOS_MA", "NOURL"),
-              E("14iosplc_v", "ESP32 PLC 14 (0-10 V)", "14iosplc", "-DPLC14IOS -DPLC14IOS_V", "NOURL")]
+_14iosplcs = [E("14iosplc_ma", "ESP32 PLC 14 (4-20 mA)", "14iosplc", "-DPLC14IOS -DPLC14IOS_MA", "www.industrialshields.com/es_ES/shop/esp32-plc-14-11712"),
+              E("14iosplc_v", "ESP32 PLC 14 (0-10 V)", "14iosplc", "-DPLC14IOS -DPLC14IOS_V", "www.industrialshields.com/es_ES/shop/esp32-plc-14-11712")]
 
 
 for plc in chain(wifi_module, esp32plcs, _10iosplcs, _14iosplcs):
