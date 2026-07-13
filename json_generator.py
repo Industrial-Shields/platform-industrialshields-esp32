@@ -50,7 +50,7 @@ class JSON_PLC:
 
 
     def __init__(self, file_name: str, name: str, variant: str, extra_flags: str, url: str,
-                 base_json: str) -> Self:
+                 base_json: str) -> None:
         """
         Method to initialize a JSON_PLC instance.
 
