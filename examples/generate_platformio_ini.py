@@ -46,7 +46,7 @@ BASE_PLATFORMIO_INI = \
 
 [env]
 platform_packages =
-   framework-industrialshields-esp32@https://apps.industrialshields.com/main/arduino/boards/industrialshields-boards-esp32-2.3.1-hf.tar.bz2
+   framework-industrialshields-esp32@https://apps.industrialshields.com/main/arduino/boards/industrialshields-boards-esp32-2.7.0.tar.bz2
 
 """
 

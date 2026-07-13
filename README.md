@@ -119,7 +119,7 @@ You must specify a boards version in `platform_packages`:
 ```ini
 [env]
 platform_packages =
-   framework-industrialshields-esp32@https://apps.industrialshields.com/main/arduino/boards/industrialshields-boards-esp32-2.6.1.tar.bz2
+   framework-industrialshields-esp32@https://apps.industrialshields.com/main/arduino/boards/industrialshields-boards-esp32-2.7.0.tar.bz2
 ```
 
 Check all available versions at https://apps.industrialshields.com/main/arduino/boards/
