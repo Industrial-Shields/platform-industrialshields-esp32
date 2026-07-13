@@ -5,6 +5,7 @@
         },
         "core": "industrialshields",
         "extra_flags": " -DESP32PLC -DESP32PLC_53ARR",
+        "partitions": "default_16MB.csv",
         "f_cpu": "240000000L",
         "f_flash": "80000000L",
         "flash_mode": "qout",

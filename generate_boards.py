@@ -40,6 +40,7 @@ esp32_basejson = """
     },
     "core": "industrialshields",
     "extra_flags": "",
+    "partitions": "default_16MB.csv",
     "f_cpu": "240000000L",
     "f_flash": "80000000L",
     "flash_mode": "qout",
